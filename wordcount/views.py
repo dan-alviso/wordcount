@@ -1,5 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import render
+import operator
 
 def homepage(request):
     return render(request, 'home.html')
@@ -9,4 +10,16 @@ def count(request):
 
     wordlist = fulltext.split()
 
-    return render(request, 'count.html',{'fulltext':fulltext,'count':len(wordlist)})
+    worddictionary = {}
+
+    for word in wordlist:
+        if word in worddictionary:
+            #Increment the count by one
+            worddictionary[word] += 1
+        else:
+            #Add to worddictionary
+            worddictionary[word] = 1
+
+    sortedwords = sorted(worddictionary.items(), key=operator.itemgetter(1), reverse=True)
+
+    return render(request, 'count.html',{'fulltext':fulltext,'count':len(wordlist),'sortedwords':sortedwords})
